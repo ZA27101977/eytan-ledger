@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EYTAN BHVUK | The Freedom Ledger</title>
+    <style>
+        :root {
+            --bg-color: #f9f5eb;
+            --text-dark: #1a1a1a;
+            --accent-gold: #b2935b;
+            --accent-green: #2d5a27;
+            --border-color: #d1ccbc;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            border-top: 4px double var(--text-dark);
+            border-bottom: 4px double var(--text-dark);
+            padding: 20px 0;
+        }
+
+        /* Header Section */
+        header {
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .vol-info {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .date-info {
+            position: absolute;
+            top: 0;
+            left: 0;
+            font-size: 12px;
+        }
+
+        h1 {
+            font-size: 50px;
+            margin: 0;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+
+        .subtitle {
+            font-style: italic;
+            color: var(--accent-gold);
+            font-size: 18px;
+            margin-top: -5px;
+        }
+
+        /* Layout */
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+
+        /* Sidebar / Inputs */
+        .sidebar {
+            background: #f1ebd7;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .sidebar h2 {
+            font-size: 20px;
+            border-bottom: 1px solid var(--text-dark);
+            padding-bottom: 5px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        /* Results Area */
+        .results-panel {
+            text-align: center;
+        }
+
+        .big-number-box {
+            background: #fdfbf7;
+            padding: 40px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .total-label {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .total-value {
+            font-size: 80px;
+            color: var(--accent-gold);
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .passive-income {
+            font-style: italic;
+            font-size: 18px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            border: 1px solid var(--border-color);
+            padding: 15px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-green);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        /* Footer Quote */
+        .footer-banner {
+            background: #eee6d3;
+            padding: 15px;
+            text-align: center;
+            font-style: italic;
+            font-size: 20px;
+            margin-top: 30px;
+            border: 1px solid var(--border-color);
+        }
+
+        .footer-banner span {
+            color: var(--accent-gold);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="vol-info">VOL. I • NO. 1</div>
+        <div class="date-info" id="current-date"></div>
+        <h1>EYTAN BHVUK</h1>
+        <div class="subtitle">The Freedom Ledger</div>
+    </header>
+
+    <div class="main-content">
+        <aside class="sidebar">
+            <h2>התוכנית שלך</h2>
+            <div class="input-group">
+                <label>גיל התחלה</label>
+                <input type="number" id="startAge" value="30">
+            </div>
+            <div class="input-group">
+                <label>גיל פרישה</label>
+                <input type="number" id="retireAge" value="65">
+            </div>
+            <div class="input-group">
+                <label>הון התחלתי ($)</label>
+                <input type="number" id="capital" value="10000">
+            </div>
+            <div class="input-group">
+                <label>הפקדה חודשית ($)</label>
+                <input type="number" id="monthly" value="1000">
+            </div>
+            <div class="input-group">
+                <label>תשואה שנתית מצופה (%)</label>
+                <input type="number" id="returnRate" value="10" step="0.5">
+            </div>
+        </aside>
+
+        <section class="results-panel">
+            <div class="big-number-box">
+                <div class="total-label">הפורטפוליו שלך בגיל <span id="display-retire-age">65</span></div>
+                <div class="total-value" id="final-sum">$0</div>
+                <div class="passive-income">תומך ב- <span id="monthly-passive">$0</span> לחודש הכנסה פסיבית (לפי כלל ה-4%)</div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">סך הפקדות</div>
+                    <div class="stat-value" id="total-contributed">$0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">רווח מריבית דריבית</div>
+                    <div class="stat-value" id="total-earned">$0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">"עלות הזהירות"</div>
+                    <div class="stat-value" id="opportunity-cost" style="color: #a33;">$0</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="footer-banner">
+        השקעה של <span id="one-hundred-calc">$100</span> היום תהפוך ל-<span id="future-hundred">$0</span> עד גיל הפרישה שלך.
+    </div>
+</div>
+
+<script>
+    function calculate() {
+        const startAge = parseFloat(document.getElementById('startAge').value);
+        const retireAge = parseFloat(document.getElementById('retireAge').value);
+        const capital = parseFloat(document.getElementById('capital').value);
+        const monthly = parseFloat(document.getElementById('monthly').value);
+        const annualRate = parseFloat(document.getElementById('returnRate').value) / 100;
+        
+        const years = retireAge - startAge;
+        const months = years * 12;
+        const monthlyRate = annualRate / 12;
+
+        if (years <= 0) return;
+
+        // Compound Interest Formula
+        // Future Value = P(1+r)^n + PMT * [((1+r)^n - 1) / r]
+        const fvPrincipal = capital * Math.pow(1 + monthlyRate, months);
+        const fvContributions = monthly * (Math.pow(1 + monthlyRate, months) - 1) / monthlyRate;
+        const totalValue = fvPrincipal + fvContributions;
+
+        const totalInvested = capital + (monthly * months);
+        const totalGains = totalValue - totalInvested;
+        const monthlyPassive = (totalValue * 0.04) / 12;
+
+        // UI Updates
+        document.getElementById('display-retire-age').innerText = retireAge;
+        document.getElementById('final-sum').innerText = formatCurrency(totalValue);
+        document.getElementById('monthly-passive').innerText = formatCurrency(monthlyPassive);
+        document.getElementById('total-contributed').innerText = formatCurrency(totalInvested);
+        document.getElementById('total-earned').innerText = formatCurrency(totalGains);
+        
+        // Opportunity cost (if kept in cash vs invested)
+        document.getElementById('opportunity-cost').innerText = formatCurrency(totalGains);
+
+        // Future 100 calc
+        const future100 = 100 * Math.pow(1 + annualRate, years);
+        document.getElementById('future-hundred').innerText = formatCurrency(future100);
+    }
+
+    function formatCurrency(num) {
+        if (num >= 1000000) return '$' + (num / 1000000).toFixed(2) + 'M';
+        if (num >= 1000) return '$' + (num / 1000).toFixed(1) + 'K';
+        return '$' + Math.floor(num).toLocaleString();
+    }
+
+    // Set date
+    document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric'
+    }).toUpperCase();
+
+    // Listeners
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', calculate);
+    });
+
+    // Initial run
+    calculate();
+</script>
+
+</body>
+</html>
