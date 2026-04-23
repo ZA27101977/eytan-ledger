@@ -3,33 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EYTAN BHVUK | The Freedom Ledger</title>
+    <title>EYTAN STOK | The Freedom Ledger</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-color: #f9f5eb;
-            --text-dark: #1a1a1a;
+            --bg-color: #f6f1e3; /* נייר מיושן */
+            --text-dark: #1e1e1e;
             --accent-gold: #b2935b;
             --accent-green: #2d5a27;
+            --accent-blue: #007bff; /* צבע הסליידר */
+            --accent-purple: #9370db; /* צבע הכפתור הסגול מהתמונה */
             --border-color: #d1ccbc;
+            --font-serif: 'Times New Roman', Times, serif;
+            --font-sans: 'Arial', sans-serif;
         }
 
         body {
-            font-family: 'Times New Roman', Times, serif;
+            font-family: var(--font-serif);
             background-color: var(--bg-color);
             color: var(--text-dark);
             margin: 0;
             padding: 20px;
+            direction: rtl; /* כיוון כללי מימין לשמאל */
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
             border-top: 4px double var(--text-dark);
             border-bottom: 4px double var(--text-dark);
             padding: 20px 0;
+            position: relative;
         }
 
-        /* Header Section */
+        /* סקציית הכותרת */
         header {
             text-align: center;
             border-bottom: 1px solid var(--border-color);
@@ -44,6 +51,7 @@
             right: 0;
             font-size: 12px;
             text-transform: uppercase;
+            font-family: var(--font-sans);
         }
 
         .date-info {
@@ -51,31 +59,81 @@
             top: 0;
             left: 0;
             font-size: 12px;
+            font-family: var(--font-sans);
+        }
+
+        .currency-switch {
+            position: absolute;
+            top: 30px;
+            left: 0;
+            display: flex;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            font-family: var(--font-sans);
+        }
+
+        .currency-switch button {
+            background: #e8e1cd;
+            border: none;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .currency-switch button.active {
+            background: #fff;
+            color: #000;
         }
 
         h1 {
-            font-size: 50px;
-            margin: 0;
-            letter-spacing: 4px;
+            font-size: 60px;
+            margin: 10px 0 0;
+            letter-spacing: 2px;
             text-transform: uppercase;
             font-weight: 900;
+            color: var(--text-dark);
         }
 
         .subtitle {
             font-style: italic;
             color: var(--accent-gold);
-            font-size: 18px;
+            font-size: 20px;
             margin-top: -5px;
         }
 
-        /* Layout */
+        .tabs {
+            margin-top: 20px;
+            font-family: var(--font-sans);
+            font-weight: bold;
+        }
+
+        .tab {
+            margin: 0 15px;
+            color: #777;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            color: var(--text-dark);
+            border-bottom: 2px solid var(--accent-gold);
+        }
+
+        .tab-prompt {
+            position: absolute;
+            right: 0;
+            top: 20px;
+            color: #777;
+            font-size: 14px;
+        }
+
+        /* פריסה דו-עמודתית */
         .main-content {
             display: grid;
-            grid-template-columns: 280px 1fr;
+            grid-template-columns: 320px 1fr;
             gap: 30px;
         }
 
-        /* Sidebar / Inputs */
+        /* סיידבר של תשומות */
         .sidebar {
             background: #f1ebd7;
             padding: 20px;
@@ -86,6 +144,7 @@
             font-size: 20px;
             border-bottom: 1px solid var(--text-dark);
             padding-bottom: 5px;
+            margin-bottom: 15px;
         }
 
         .input-group {
@@ -98,6 +157,7 @@
             font-weight: bold;
             text-transform: uppercase;
             margin-bottom: 5px;
+            font-family: var(--font-sans);
         }
 
         input {
@@ -107,9 +167,105 @@
             background: transparent;
             font-size: 16px;
             box-sizing: border-box;
+            font-family: var(--font-serif);
         }
 
-        /* Results Area */
+        .slider-group {
+            margin-top: 20px;
+        }
+
+        .slider-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            font-family: var(--font-sans);
+        }
+
+        .slider-row {
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="range"] {
+            flex-grow: 1;
+            -webkit-appearance: none;
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 10px;
+            background: #dcd7c5;
+            border-radius: 5px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            cursor: pointer;
+            margin-top: -5px; /* ממקם את הבוהן במרכז */
+        }
+
+        .slider-value {
+            margin-left: 10px;
+            font-family: var(--font-serif);
+            font-size: 16px;
+        }
+
+        .advanced-group {
+            margin-top: 20px;
+        }
+
+        .scenario-buttons, .nominal-real-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            font-family: var(--font-sans);
+        }
+
+        .scenario-button, .nominal-real-button {
+            background: #e8e1cd;
+            border: none;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+
+        .scenario-button.active, .nominal-real-button.active {
+            background: #fff;
+            color: #000;
+        }
+
+        .advanced-toggle {
+            cursor: pointer;
+            text-decoration: underline;
+            color: #777;
+            font-family: var(--font-sans);
+            margin-top: 15px;
+            display: block;
+        }
+
+        .advanced-options {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .advanced-options.active {
+            display: block;
+        }
+
+        /* פאנל תוצאות */
         .results-panel {
             text-align: center;
         }
@@ -119,64 +275,197 @@
             padding: 40px;
             border: 1px solid var(--border-color);
             margin-bottom: 20px;
+            position: relative;
         }
 
         .total-label {
-            font-size: 14px;
+            font-size: 16px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            font-family: var(--font-sans);
+            color: #777;
         }
 
         .total-value {
-            font-size: 80px;
+            font-size: 90px;
             color: var(--accent-gold);
             font-weight: bold;
             margin: 10px 0;
+            font-family: var(--font-serif);
         }
 
         .passive-income {
             font-style: italic;
-            font-size: 18px;
+            font-size: 20px;
+            color: var(--text-dark);
         }
 
-        /* Stats Grid */
+        /* רשת מדדים */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 15px;
+            margin-bottom: 30px;
+            text-align: center;
         }
 
         .stat-card {
             border: 1px solid var(--border-color);
-            padding: 15px;
+            padding: 20px;
+            background: #fdfbf7;
         }
 
         .stat-value {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
             color: var(--accent-green);
+            font-family: var(--font-serif);
         }
 
         .stat-label {
-            font-size: 12px;
+            font-size: 14px;
             text-transform: uppercase;
+            color: #777;
+            font-family: var(--font-sans);
+            margin-top: 5px;
         }
 
-        /* Footer Quote */
-        .footer-banner {
-            background: #eee6d3;
-            padding: 15px;
+        /* סקציית גרפים */
+        .graphs-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .graph-card {
+            background: #fdfbf7;
+            padding: 20px;
+            border: 1px solid var(--border-color);
             text-align: center;
+            position: relative;
+        }
+
+        .graph-title {
             font-style: italic;
             font-size: 20px;
+            margin-bottom: 10px;
+            text-align: left; /* השאר את האנגלית מיושרת לשמאל כפי שבתמונה */
+            font-family: var(--font-serif);
+        }
+
+        .graph-legend {
+            font-size: 12px;
+            color: #777;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            font-family: var(--font-sans);
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .legend-color {
+            width: 10px;
+            height: 10px;
+            margin-right: 5px;
+        }
+
+        .graph-caution-number {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #c33; /* אדום כהה לזהירות */
+            font-family: var(--font-sans);
+            background: rgba(255,255,255,0.7);
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 300px !important;
+        }
+
+        /* סקציית הפוטר */
+        footer {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .footer-banner {
+            background: #eee6d3;
+            padding: 20px;
+            text-align: center;
+            font-style: italic;
+            font-size: 22px;
             margin-top: 30px;
             border: 1px solid var(--border-color);
+            position: relative;
         }
 
         .footer-banner span {
             color: var(--accent-gold);
             font-weight: bold;
+        }
+
+        .purple-button-section {
+            background: #fffef8;
+            padding: 40px;
+            border-top: 2px solid var(--border-color);
+            border-bottom: 2px solid var(--border-color);
+            margin-top: 20px;
+        }
+
+        .know-the-number {
+            font-size: 36px;
+            margin-bottom: 10px;
+            font-family: var(--font-serif);
+        }
+
+        .know-the-number span {
+            font-style: italic;
+            color: var(--accent-gold);
+        }
+
+        .join-text {
+            color: #777;
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+            font-family: var(--font-serif);
+            font-style: italic;
+        }
+
+        /* הכפתור הסגול הבוהק עם הטקסט המעודכן */
+        .purple-button {
+            display: inline-block;
+            background: var(--accent-purple);
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-family: var(--font-sans);
+            font-weight: bold;
+            font-size: 18px;
+            transition: background 0.3s;
+        }
+
+        .purple-button:hover {
+            background: #7b68ee; /* גוון בהיר יותר בהעברה של העכבר */
+        }
+
+        .disclaimer {
+            font-size: 11px;
+            color: #999;
+            margin-top: 20px;
+            text-transform: uppercase;
+            font-family: var(--font-sans);
         }
     </style>
 </head>
@@ -185,123 +474,7 @@
 <div class="container">
     <header>
         <div class="vol-info">VOL. I • NO. 1</div>
-        <div class="date-info" id="current-date"></div>
-        <h1>EYTAN BHVUK</h1>
-        <div class="subtitle">The Freedom Ledger</div>
-    </header>
-
-    <div class="main-content">
-        <aside class="sidebar">
-            <h2>התוכנית שלך</h2>
-            <div class="input-group">
-                <label>גיל התחלה</label>
-                <input type="number" id="startAge" value="30">
-            </div>
-            <div class="input-group">
-                <label>גיל פרישה</label>
-                <input type="number" id="retireAge" value="65">
-            </div>
-            <div class="input-group">
-                <label>הון התחלתי ($)</label>
-                <input type="number" id="capital" value="10000">
-            </div>
-            <div class="input-group">
-                <label>הפקדה חודשית ($)</label>
-                <input type="number" id="monthly" value="1000">
-            </div>
-            <div class="input-group">
-                <label>תשואה שנתית מצופה (%)</label>
-                <input type="number" id="returnRate" value="10" step="0.5">
-            </div>
-        </aside>
-
-        <section class="results-panel">
-            <div class="big-number-box">
-                <div class="total-label">הפורטפוליו שלך בגיל <span id="display-retire-age">65</span></div>
-                <div class="total-value" id="final-sum">$0</div>
-                <div class="passive-income">תומך ב- <span id="monthly-passive">$0</span> לחודש הכנסה פסיבית (לפי כלל ה-4%)</div>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">סך הפקדות</div>
-                    <div class="stat-value" id="total-contributed">$0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">רווח מריבית דריבית</div>
-                    <div class="stat-value" id="total-earned">$0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">"עלות הזהירות"</div>
-                    <div class="stat-value" id="opportunity-cost" style="color: #a33;">$0</div>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <div class="footer-banner">
-        השקעה של <span id="one-hundred-calc">$100</span> היום תהפוך ל-<span id="future-hundred">$0</span> עד גיל הפרישה שלך.
-    </div>
-</div>
-
-<script>
-    function calculate() {
-        const startAge = parseFloat(document.getElementById('startAge').value);
-        const retireAge = parseFloat(document.getElementById('retireAge').value);
-        const capital = parseFloat(document.getElementById('capital').value);
-        const monthly = parseFloat(document.getElementById('monthly').value);
-        const annualRate = parseFloat(document.getElementById('returnRate').value) / 100;
-        
-        const years = retireAge - startAge;
-        const months = years * 12;
-        const monthlyRate = annualRate / 12;
-
-        if (years <= 0) return;
-
-        // Compound Interest Formula
-        // Future Value = P(1+r)^n + PMT * [((1+r)^n - 1) / r]
-        const fvPrincipal = capital * Math.pow(1 + monthlyRate, months);
-        const fvContributions = monthly * (Math.pow(1 + monthlyRate, months) - 1) / monthlyRate;
-        const totalValue = fvPrincipal + fvContributions;
-
-        const totalInvested = capital + (monthly * months);
-        const totalGains = totalValue - totalInvested;
-        const monthlyPassive = (totalValue * 0.04) / 12;
-
-        // UI Updates
-        document.getElementById('display-retire-age').innerText = retireAge;
-        document.getElementById('final-sum').innerText = formatCurrency(totalValue);
-        document.getElementById('monthly-passive').innerText = formatCurrency(monthlyPassive);
-        document.getElementById('total-contributed').innerText = formatCurrency(totalInvested);
-        document.getElementById('total-earned').innerText = formatCurrency(totalGains);
-        
-        // Opportunity cost (if kept in cash vs invested)
-        document.getElementById('opportunity-cost').innerText = formatCurrency(totalGains);
-
-        // Future 100 calc
-        const future100 = 100 * Math.pow(1 + annualRate, years);
-        document.getElementById('future-hundred').innerText = formatCurrency(future100);
-    }
-
-    function formatCurrency(num) {
-        if (num >= 1000000) return '$' + (num / 1000000).toFixed(2) + 'M';
-        if (num >= 1000) return '$' + (num / 1000).toFixed(1) + 'K';
-        return '$' + Math.floor(num).toLocaleString();
-    }
-
-    // Set date
-    document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', {
-        month: 'short', day: 'numeric', year: 'numeric'
-    }).toUpperCase();
-
-    // Listeners
-    document.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', calculate);
-    });
-
-    // Initial run
-    calculate();
-</script>
-
-</body>
-</html>
+        <div class="date-info">APR 23, 2026</div>
+        <div class="currency-switch">
+            <button class="active">USD$</button>
+            <button>ILS
