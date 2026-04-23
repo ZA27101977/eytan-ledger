@@ -7,12 +7,12 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-color: #f6f1e3; /* נייר מיושן */
+            --bg-color: #f6f1e3;
             --text-dark: #1e1e1e;
             --accent-gold: #b2935b;
             --accent-green: #2d5a27;
-            --accent-blue: #007bff; /* צבע הסליידר */
-            --accent-purple: #9370db; /* צבע הכפתור הסגול מהתמונה */
+            --accent-blue: #007bff;
+            --accent-purple: #9370db;
             --border-color: #d1ccbc;
             --font-serif: 'Times New Roman', Times, serif;
             --font-sans: 'Arial', sans-serif;
@@ -23,458 +23,356 @@
             background-color: var(--bg-color);
             color: var(--text-dark);
             margin: 0;
-            padding: 20px;
-            direction: rtl; /* כיוון כללי מימין לשמאל */
+            padding: 40px 20px;
+            direction: rtl;
+        }
+
+        /* מסגרת חיצונית עם קווים כפולים כמו בעיתון */
+        .outer-border {
+            max-width: 1200px;
+            margin: 0 auto;
+            border-top: 1px solid var(--text-dark);
+            border-bottom: 1px solid var(--text-dark);
+            padding: 5px 0;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            border-top: 4px double var(--text-dark);
-            border-bottom: 4px double var(--text-dark);
+            border-top: 3px solid var(--text-dark);
+            border-bottom: 3px solid var(--text-dark);
             padding: 20px 0;
             position: relative;
         }
 
-        /* סקציית הכותרת */
+        /* Header Layout - תיקון הדיוק */
         header {
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 20px;
+            padding-bottom: 30px;
             margin-bottom: 20px;
             position: relative;
         }
 
         .vol-info {
-            position: absolute;
-            top: 0;
-            right: 0;
-            font-size: 12px;
-            text-transform: uppercase;
+            font-size: 13px;
             font-family: var(--font-sans);
+            font-weight: bold;
+            padding-top: 10px;
         }
 
-        .date-info {
-            position: absolute;
-            top: 0;
-            left: 0;
-            font-size: 12px;
-            font-family: var(--font-sans);
-        }
-
-        .currency-switch {
-            position: absolute;
-            top: 30px;
-            left: 0;
-            display: flex;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            font-family: var(--font-sans);
-        }
-
-        .currency-switch button {
-            background: #e8e1cd;
-            border: none;
-            padding: 5px 10px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .currency-switch button.active {
-            background: #fff;
-            color: #000;
+        .header-center {
+            text-align: center;
+            flex-grow: 1;
         }
 
         h1 {
-            font-size: 60px;
-            margin: 10px 0 0;
-            letter-spacing: 2px;
+            font-size: 55px;
+            margin: 0;
+            letter-spacing: 3px;
             text-transform: uppercase;
             font-weight: 900;
-            color: var(--text-dark);
+            line-height: 1;
         }
 
         .subtitle {
             font-style: italic;
             color: var(--accent-gold);
-            font-size: 20px;
-            margin-top: -5px;
+            font-size: 18px;
+            margin-top: 5px;
         }
 
-        .tabs {
-            margin-top: 20px;
+        /* התיבה בצד ימין (מטבע ותאריך) */
+        .header-controls {
+            border: 1px solid var(--border-color);
+            background: #fffefb;
+            padding: 0;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .currency-toggle {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .currency-toggle button {
+            flex: 1;
+            background: #e8e1cd;
+            border: none;
+            padding: 6px 8px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: var(--font-sans);
+        }
+
+        .currency-toggle button.active {
+            background: #000;
+            color: #fff;
+        }
+
+        .date-display {
+            font-size: 12px;
+            padding: 5px;
             font-family: var(--font-sans);
             font-weight: bold;
+            color: #555;
+            text-transform: uppercase;
         }
 
-        .tab {
-            margin: 0 15px;
-            color: #777;
+        /* Layout Grid */
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+        }
+
+        .tab-nav {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-family: var(--font-sans);
+            font-size: 14px;
+        }
+
+        .tabs span {
+            margin-left: 20px;
+            font-weight: bold;
             cursor: pointer;
+            color: #999;
         }
 
-        .tab.active {
+        .tabs span.active {
             color: var(--text-dark);
             border-bottom: 2px solid var(--accent-gold);
         }
 
-        .tab-prompt {
-            position: absolute;
-            right: 0;
-            top: 20px;
-            color: #777;
-            font-size: 14px;
-        }
-
-        /* פריסה דו-עמודתית */
-        .main-content {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 30px;
-        }
-
-        /* סיידבר של תשומות */
+        /* Sidebar & Inputs */
         .sidebar {
             background: #f1ebd7;
             padding: 20px;
             border: 1px solid var(--border-color);
         }
 
-        .sidebar h2 {
-            font-size: 20px;
-            border-bottom: 1px solid var(--text-dark);
-            padding-bottom: 5px;
-            margin-bottom: 15px;
-        }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; font-family: var(--font-sans); }
+        input { width: 100%; padding: 8px; border: 1px solid var(--border-color); background: transparent; font-size: 16px; box-sizing: border-box; }
 
-        .input-group {
-            margin-bottom: 15px;
-        }
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type="range"]::-webkit-slider-runnable-track { height: 6px; background: #dcd7c5; border-radius: 3px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; background: var(--accent-blue); border-radius: 50%; cursor: pointer; margin-top: -6px; }
 
-        label {
-            display: block;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-            font-family: var(--font-sans);
-        }
-
-        input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid var(--border-color);
-            background: transparent;
-            font-size: 16px;
-            box-sizing: border-box;
-            font-family: var(--font-serif);
-        }
-
-        .slider-group {
-            margin-top: 20px;
-        }
-
-        .slider-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-            font-family: var(--font-sans);
-        }
-
-        .slider-row {
-            display: flex;
-            align-items: center;
-        }
-
-        input[type="range"] {
-            flex-grow: 1;
-            -webkit-appearance: none;
-            background: transparent;
-            border: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        input[type="range"]::-webkit-slider-runnable-track {
-            height: 10px;
-            background: #dcd7c5;
-            border-radius: 5px;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 20px;
-            width: 20px;
-            background: var(--accent-blue);
-            border-radius: 50%;
-            cursor: pointer;
-            margin-top: -5px; /* ממקם את הבוהן במרכז */
-        }
-
-        .slider-value {
-            margin-left: 10px;
-            font-family: var(--font-serif);
-            font-size: 16px;
-        }
-
-        .advanced-group {
-            margin-top: 20px;
-        }
-
-        .scenario-buttons, .nominal-real-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            font-family: var(--font-sans);
-        }
-
-        .scenario-button, .nominal-real-button {
-            background: #e8e1cd;
-            border: none;
-            padding: 5px 10px;
-            font-size: 12px;
-            cursor: pointer;
-            flex: 1;
-            text-align: center;
-        }
-
-        .scenario-button.active, .nominal-real-button.active {
-            background: #fff;
-            color: #000;
-        }
-
-        .advanced-toggle {
-            cursor: pointer;
-            text-decoration: underline;
-            color: #777;
-            font-family: var(--font-sans);
-            margin-top: 15px;
-            display: block;
-        }
-
-        .advanced-options {
-            display: none;
-            margin-top: 15px;
-        }
-
-        .advanced-options.active {
-            display: block;
-        }
-
-        /* פאנל תוצאות */
-        .results-panel {
-            text-align: center;
-        }
-
+        /* Results Display */
         .big-number-box {
             background: #fdfbf7;
             padding: 40px;
             border: 1px solid var(--border-color);
             margin-bottom: 20px;
-            position: relative;
-        }
-
-        .total-label {
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: var(--font-sans);
-            color: #777;
+            text-align: center;
         }
 
         .total-value {
-            font-size: 90px;
+            font-size: 85px;
             color: var(--accent-gold);
             font-weight: bold;
             margin: 10px 0;
-            font-family: var(--font-serif);
+            display: block;
         }
 
-        .passive-income {
-            font-style: italic;
-            font-size: 20px;
-            color: var(--text-dark);
-        }
-
-        /* רשת מדדים */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 15px;
             margin-bottom: 30px;
-            text-align: center;
         }
 
         .stat-card {
             border: 1px solid var(--border-color);
-            padding: 20px;
+            padding: 15px;
+            text-align: center;
             background: #fdfbf7;
         }
 
-        .stat-value {
-            font-size: 28px;
-            font-weight: bold;
-            color: var(--accent-green);
-            font-family: var(--font-serif);
-        }
+        .stat-value { font-size: 24px; font-weight: bold; color: var(--accent-green); }
+        .stat-label { font-size: 11px; color: #777; text-transform: uppercase; margin-top: 5px; font-family: var(--font-sans); }
 
-        .stat-label {
-            font-size: 14px;
-            text-transform: uppercase;
-            color: #777;
-            font-family: var(--font-sans);
-            margin-top: 5px;
-        }
+        .graphs-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .graph-card { background: #fdfbf7; padding: 20px; border: 1px solid var(--border-color); height: 350px; position: relative; }
 
-        /* סקציית גרפים */
-        .graphs-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .graph-card {
-            background: #fdfbf7;
-            padding: 20px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-            position: relative;
-        }
-
-        .graph-title {
-            font-style: italic;
-            font-size: 20px;
-            margin-bottom: 10px;
-            text-align: left; /* השאר את האנגלית מיושרת לשמאל כפי שבתמונה */
-            font-family: var(--font-serif);
-        }
-
-        .graph-legend {
-            font-size: 12px;
-            color: #777;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            font-family: var(--font-sans);
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-        }
-
-        .legend-color {
-            width: 10px;
-            height: 10px;
-            margin-right: 5px;
-        }
-
-        .graph-caution-number {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            color: #c33; /* אדום כהה לזהירות */
-            font-family: var(--font-sans);
-            background: rgba(255,255,255,0.7);
-            padding: 2px 5px;
-            border-radius: 3px;
-        }
-
-        canvas {
-            width: 100% !important;
-            height: 300px !important;
-        }
-
-        /* סקציית הפוטר */
-        footer {
-            margin-top: 40px;
-            text-align: center;
-        }
-
-        .footer-banner {
-            background: #eee6d3;
-            padding: 20px;
-            text-align: center;
-            font-style: italic;
-            font-size: 22px;
-            margin-top: 30px;
-            border: 1px solid var(--border-color);
-            position: relative;
-        }
-
-        .footer-banner span {
-            color: var(--accent-gold);
-            font-weight: bold;
-        }
-
-        .purple-button-section {
-            background: #fffef8;
-            padding: 40px;
-            border-top: 2px solid var(--border-color);
-            border-bottom: 2px solid var(--border-color);
-            margin-top: 20px;
-        }
-
-        .know-the-number {
-            font-size: 36px;
-            margin-bottom: 10px;
-            font-family: var(--font-serif);
-        }
-
-        .know-the-number span {
-            font-style: italic;
-            color: var(--accent-gold);
-        }
-
-        .join-text {
-            color: #777;
-            max-width: 600px;
-            margin: 0 auto 20px auto;
-            font-family: var(--font-serif);
-            font-style: italic;
-        }
-
-        /* הכפתור הסגול הבוהק עם הטקסט המעודכן */
-        .purple-button {
-            display: inline-block;
+        /* Footer & Button */
+        .footer-banner { background: #eee6d3; padding: 15px; text-align: center; font-style: italic; font-size: 20px; border: 1px solid var(--border-color); margin-top: 15px; }
+        
+        .cta-section { text-align: center; padding: 50px 0; border-top: 1px solid var(--border-color); margin-top: 40px; }
+        .purple-btn {
             background: var(--accent-purple);
             color: #fff;
-            padding: 15px 30px;
-            border-radius: 5px;
+            padding: 15px 40px;
+            border-radius: 30px;
             text-decoration: none;
-            font-family: var(--font-sans);
             font-weight: bold;
-            font-size: 18px;
-            transition: background 0.3s;
-        }
-
-        .purple-button:hover {
-            background: #7b68ee; /* גוון בהיר יותר בהעברה של העכבר */
-        }
-
-        .disclaimer {
-            font-size: 11px;
-            color: #999;
-            margin-top: 20px;
-            text-transform: uppercase;
             font-family: var(--font-sans);
+            display: inline-block;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <div class="vol-info">VOL. I • NO. 1</div>
-        <div class="date-info">APR 23, 2026</div>
-        <div class="currency-switch">
-            <button class="active">USD$</button>
-            <button>ILS
+<div class="outer-border">
+    <div class="container">
+        
+        <header>
+            <div class="vol-info">VOL. I • NO. 1</div>
+            
+            <div class="header-center">
+                <h1>EYTAN STOK</h1>
+                <div class="subtitle">The Freedom Ledger</div>
+            </div>
+
+            <div class="header-controls">
+                <div class="currency-toggle">
+                    <button class="active">USD $</button>
+                    <button>ILS ₪</button>
+                </div>
+                <div class="date-display">APR 23, 2026</div>
+            </div>
+        </header>
+
+        <div class="tab-nav">
+            <div class="tabs">
+                <span class="active">I. Forward Simulator</span>
+                <span>II. Reverse Engineer</span>
+            </div>
+            <div style="font-style: italic; color: #777;">Set your plan. The ledger shows what you'll have.</div>
+        </div>
+
+        <div class="main-content">
+            <aside class="sidebar">
+                <div class="input-group">
+                    <label>Start Age</label>
+                    <input type="number" id="startAge" value="0">
+                </div>
+                <div class="input-group">
+                    <label>Retire At</label>
+                    <input type="number" id="retireAge" value="65">
+                </div>
+                <div class="input-group">
+                    <label>Capital</label>
+                    <input type="number" id="capital" value="10000">
+                </div>
+                <div class="input-group">
+                    <label>Monthly</label>
+                    <input type="number" id="monthly" value="1000">
+                </div>
+                <div class="input-group">
+                    <label>Annual Return: <span id="rateLabel">10%</span></label>
+                    <input type="range" id="returnRate" min="1" max="20" value="10" step="0.5">
+                </div>
+            </aside>
+
+            <section class="results">
+                <div class="big-number-box">
+                    <span style="text-transform: uppercase; font-size: 12px; font-family: var(--font-sans); color: #777;">Your Portfolio at age 65</span>
+                    <span class="total-value" id="finalSum">$0</span>
+                    <div style="font-style: italic;">That supports <b>$12.3K</b>/month of passive income (4% rule).</div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="contributedVal">$0</div>
+                        <div class="stat-label">Contributed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="earnedVal">$0</div>
+                        <div class="stat-label">Earned by Compounding</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="cautionVal" style="color: #a33;">$0</div>
+                        <div class="stat-label">Cost of Cash</div>
+                    </div>
+                </div>
+
+                <div class="graphs-section">
+                    <div class="graph-card"><canvas id="chart1"></canvas></div>
+                    <div class="graph-card"><canvas id="chart2"></canvas></div>
+                </div>
+            </section>
+        </div>
+
+        <div class="footer-banner">
+            A single <span>$100</span> invested today becomes <span id="future100">$2,810</span> by age 65.
+        </div>
+
+        <div class="cta-section">
+            <h2 style="font-size: 32px; margin-bottom: 10px;">Now you know the <i>number</i>.</h2>
+            <p style="color: #777; margin-bottom: 30px;">Knowing how to get there - the stocks, the setups, when to buy - is another.</p>
+            <a href="#" class="purple-btn">הצטרפו עכשיו לקהילה איתן סטוק</a>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const ctx1 = document.getElementById('chart1').getContext('2d');
+    const ctx2 = document.getElementById('chart2').getContext('2d');
+    let chart1, chart2;
+
+    function calculate() {
+        const startAge = parseInt(document.getElementById('startAge').value);
+        const retireAge = parseInt(document.getElementById('retireAge').value);
+        const capital = parseFloat(document.getElementById('capital').value);
+        const monthly = parseFloat(document.getElementById('monthly').value);
+        const rate = parseFloat(document.getElementById('returnRate').value) / 100;
+        
+        document.getElementById('rateLabel').innerText = (rate * 100).toFixed(1) + '%';
+        
+        const years = retireAge - startAge;
+        const months = years * 12;
+        const monthlyRate = rate / 12;
+
+        let total = capital * Math.pow(1 + monthlyRate, months) + monthly * (Math.pow(1 + monthlyRate, months) - 1) / monthlyRate;
+        let invested = capital + (monthly * months);
+        
+        document.getElementById('finalSum').innerText = '$' + (total / 1000000).toFixed(2) + 'M';
+        document.getElementById('contributedVal').innerText = '$' + (invested / 1000).toFixed(1) + 'K';
+        document.getElementById('earnedVal').innerText = '$' + ((total - invested) / 1000000).toFixed(2) + 'M';
+        document.getElementById('cautionVal').innerText = '$' + ((total - invested) / 1000000).toFixed(2) + 'M';
+        
+        const f100 = 100 * Math.pow(1 + rate, years);
+        document.getElementById('future100').innerText = '$' + Math.floor(f100).toLocaleString();
+
+        updateCharts(years, capital, monthly, rate);
+    }
+
+    function updateCharts(years, capital, monthly, rate) {
+        const labels = Array.from({length: years}, (_, i) => i + 1);
+        const dataGains = labels.map(y => {
+            const m = y * 12;
+            const r = rate / 12;
+            return (capital * Math.pow(1 + r, m) + monthly * (Math.pow(1 + r, m) - 1) / r);
+        });
+
+        if(chart1) chart1.destroy();
+        chart1 = new Chart(ctx1, {
+            type: 'line',
+            data: { labels: labels, datasets: [{ label: 'On Compounding', data: dataGains, borderColor: '#b2935b', fill: true, backgroundColor: 'rgba(178,147,91,0.1)' }] },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        if(chart2) chart2.destroy();
+        chart2 = new Chart(ctx2, {
+            type: 'line',
+            data: { labels: labels, datasets: [{ label: 'Cost of Caution', data: dataGains, borderColor: '#2d5a27', fill: true, backgroundColor: 'rgba(45,90,39,0.1)' }] },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
+
+    document.querySelectorAll('input').forEach(i => i.addEventListener('input', calculate));
+    calculate();
+</script>
+
+</body>
+</html>
